@@ -271,6 +271,18 @@ variable "azs" {
   type        = list(string)
 }
 
+variable "public_azs" {
+  description = "A list of availability zones in the region"
+  default     = []
+  type        = list(string)
+}
+
+variable "private_azs" {
+  description = "A list of availability zones in the region"
+  default     = []
+  type        = list(string)
+}
+
 variable "enable_dns_hostnames" {
   description = "Should be true to enable DNS hostnames in the VPC"
   default     = false
