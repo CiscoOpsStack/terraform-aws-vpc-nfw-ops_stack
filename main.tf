@@ -1,6 +1,6 @@
 locals {
   max_subnet_length = max(length(var.private_subnets), length(var.elasticache_subnets), length(var.database_subnets), length(var.redshift_subnets), length(var.firewall_subnets), length(var.tgw_subnets))
-  nat_gateway_count = var.single_nat_gateway ? 1 : (var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length)
+  nat_gateway_count = var.single_nat_gateway ? 1 : (var.one_nat_gateway_per_az ? length(var.public_azs) : length(var.public_subnets)
 
   nfw_subnets = [for s in aws_subnet.firewall : s.id]
 
@@ -121,7 +121,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = merge(tomap({
-    "Name" = format("%s-%s", var.name, element(var.azs, (var.single_nat_gateway ? 0 : count.index)))
+    "Name" = format("%s-%s", var.name, element(var.public_azs, (var.single_nat_gateway ? 0 : count.index)))
   }), var.tags, var.nat_eip_tags)
 }
 
@@ -132,7 +132,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     = element(aws_subnet.public.*.id, (var.single_nat_gateway ? 0 : count.index))
 
   tags = merge(tomap({
-    "Name" = format("%s-%s", var.name, element(var.azs, (var.single_nat_gateway ? 0 : count.index)))
+    "Name" = format("%s-%s", var.name, element(var.public_azs, (var.single_nat_gateway ? 0 : count.index)))
   }), var.tags, var.nat_gateway_tags)
 
   depends_on = [aws_internet_gateway.this, aws_subnet.public]
