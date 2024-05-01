@@ -11,7 +11,7 @@ resource "aws_subnet" "firewall" {
   availability_zone = element(var.azs, count.index)
 
   tags = merge(tomap({
-    "Name" = format("%s-${lower(var.firewall_subnet_suffix)}-%s", var.name, element(var.azs, count.index))
+    "Name" = format("%s-${lower(var.firewall_subnet_suffix)}-%s", var.name, element(var.firewall_azs, count.index))
   }), var.tags)
 }
 
@@ -20,17 +20,17 @@ resource "aws_subnet" "firewall" {
 ################
 resource "aws_subnet" "public" {
   #checkov:skip=CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default" - This is a public subet.
-  count = length(var.public_subnets) > 0 && (!var.one_nat_gateway_per_az || length(var.public_subnets) >= length(var.azs)) ? length(var.public_subnets) : 0
+  count = length(var.public_subnets) > 0 && (!var.one_nat_gateway_per_az || length(var.public_subnets) >= length(var.public_azs)) ? length(var.public_subnets) : 0
 
   vpc_id = local.vpc_id
   cidr_block = var.public_subnets[
     count.index
   ]
-  availability_zone       = element(var.azs, count.index)
+  availability_zone       = element(var.public_azs, count.index)
   map_public_ip_on_launch = var.map_public_ip_on_launch
 
   tags = merge(tomap({
-    "Name" = format("%s-${lower(var.public_subnet_suffix)}-%s", var.name, element(var.azs, count.index))
+    "Name" = format("%s-${lower(var.public_subnet_suffix)}-%s", var.name, element(var.public_azs, count.index))
   }), var.tags)
 }
 
@@ -44,10 +44,10 @@ resource "aws_subnet" "private" {
   cidr_block = var.private_subnets[
     count.index
   ]
-  availability_zone = element(var.azs, count.index)
+  availability_zone = element(private_azs, count.index)
 
   tags = merge(tomap({
-    "Name" = format("%s-${lower(var.private_subnet_tags[count.index])}-%s", var.name, element(var.azs, count.index))
+    "Name" = format("%s-${lower(var.private_subnet_tags[count.index])}-%s", var.name, element(var.private_azs, count.index))
   }), var.tags)
 }
 
@@ -61,10 +61,10 @@ resource "aws_subnet" "tgw" {
   cidr_block = var.tgw_subnets[
     count.index
   ]
-  availability_zone = element(var.azs, count.index)
+  availability_zone = element(var.tgw_azs, count.index)
 
   tags = merge(tomap({
-    "Name" = format("%s-${lower(var.tgw_subnet_tags[count.index])}-%s", var.name, element(var.azs, count.index))
+    "Name" = format("%s-${lower(var.tgw_subnet_tags[count.index])}-%s", var.name, element(var.tgw_azs, count.index))
   }), var.tags)
 }
 
@@ -78,10 +78,10 @@ resource "aws_subnet" "database" {
   cidr_block = var.database_subnets[
     count.index
   ]
-  availability_zone = element(var.azs, count.index)
+  availability_zone = element(var.db_azs, count.index)
 
   tags = merge(tomap({
-    "Name" = format("%s-${var.database_subnet_suffix}-%s", var.name, element(var.azs, count.index))
+    "Name" = format("%s-${var.database_subnet_suffix}-%s", var.name, element(var.db_azs, count.index))
   }), var.tags)
 }
 
