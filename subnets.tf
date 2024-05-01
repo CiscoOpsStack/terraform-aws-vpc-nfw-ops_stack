@@ -8,7 +8,7 @@ resource "aws_subnet" "firewall" {
   cidr_block = var.firewall_subnets[
     count.index
   ]
-  availability_zone = element(var.azs, count.index)
+  availability_zone = element(var.firewall_azs, count.index)
 
   tags = merge(tomap({
     "Name" = format("%s-${lower(var.firewall_subnet_suffix)}-%s", var.name, element(var.firewall_azs, count.index))
