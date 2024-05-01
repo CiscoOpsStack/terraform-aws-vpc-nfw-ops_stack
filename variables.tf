@@ -20,6 +20,7 @@ variable "aws_nfw_name" {
   default     = ""
 }
 
+
 variable "aws_nfw_stateless_rule_group" {
   description = "AWS NFW sateless rule group"
   type = list(object({
@@ -272,6 +273,18 @@ variable "azs" {
 }
 
 variable "public_azs" {
+  description = "A list of availability zones in the region"
+  default     = []
+  type        = list(string)
+}
+
+variable "firewall_azs" {
+  description = "A list of availability zones in the region"
+  default     = []
+  type        = list(string)
+}
+
+variable "tgw_azs" {
   description = "A list of availability zones in the region"
   default     = []
   type        = list(string)
