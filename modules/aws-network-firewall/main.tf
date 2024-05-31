@@ -261,6 +261,11 @@ resource "aws_networkfirewall_firewall_policy" "this" {
   firewall_policy {
     stateless_default_actions          = ["aws:${var.stateless_default_actions}"]
     stateless_fragment_default_actions = ["aws:${var.stateless_fragment_default_actions}"]
+    stateful_engine_options {
+      rule_order = "STRICT_ORDER"
+    }
+    stateful_default_actions = ["aws:alert_strict"]
+    
 
     #Stateless Rule Group Reference
     dynamic "stateless_rule_group_reference" {
