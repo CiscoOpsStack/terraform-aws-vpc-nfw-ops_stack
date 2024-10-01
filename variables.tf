@@ -697,3 +697,9 @@ variable "redshift_custom_routes" {
   }))
   default = []
 }
+
+variable "subnet_tags" {
+  description = "Tags to apply for all Subnets"
+  type = map(string)
+  default = {}
+}
